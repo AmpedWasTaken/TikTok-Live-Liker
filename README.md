@@ -50,7 +50,7 @@ A powerful and feature-rich userscript for automatically liking TikTok live stre
    - [Edge Extension](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
 
 2. **Install the Script**:
-   - Click [here](https://raw.githubusercontent.com/ampedwastaken/tiktok-live-autoliker/main/tiktok_live_autoliker.user.js) to install
+   - Click [here](https://github.com/AmpedWasTaken/TikTok-Live-Liker/raw/refs/heads/main/tiktok_live_autoliker.user.js) to install
    - Or copy the script content and create a new userscript in Tampermonkey
 
 ## 💡 Usage
