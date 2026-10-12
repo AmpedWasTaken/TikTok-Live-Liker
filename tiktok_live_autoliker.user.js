@@ -86,13 +86,8 @@
         }
     };
 
-    // Button structure
-    const BUTTON_STRUCTURE = {
-        container: 'tiktok-1f32i2v e1tv929b0',
-        outer: 'tiktok-yl9fg8 e1tv929b1',
-        middle: 'tiktok-pn4agh e1tv929b2',
-        inner: 'tiktok-1cu4ad e1tv929b3'
-    };
+    // Stable selector — data-e2e attributes don't change with deploys
+    const LIKE_BTN_SELECTOR = '[data-e2e="room-chat-like-btn"]';
 
     // Notification system with safety checks
     function showNotification(message, type = 'info') {
@@ -139,22 +134,16 @@
         }
     }
 
-    // Find the like button with complete structure
+   // Find the like button (stable data-e2e selector)
     function findLikeButton() {
         try {
-            // Try each part of the button structure
-            for (const [key, className] of Object.entries(BUTTON_STRUCTURE)) {
-                const elements = document.getElementsByClassName(className);
-                for (const element of elements) {
-                    if (isValidLikeButton(element)) {
-                        if (CONFIG.debugMode) {
-                            console.log(`Found like button (${key}):`, element);
-                        }
-                        return element;
-                    }
+            const btn = document.querySelector(LIKE_BTN_SELECTOR);
+            if (btn) {
+                if (CONFIG.debugMode) {
+                    console.log('Found like button:', btn);
                 }
+                return btn;
             }
-
             if (CONFIG.debugMode) {
                 console.log('Like button not found');
             }
@@ -165,62 +154,20 @@
         }
     }
 
-    // Validate if element is actually a like button
-    function isValidLikeButton(element) {
-        try {
-            // Check if element or its children contain like button characteristics
-            const hasLikeClass = element.className.includes('e1tv929b');
-            const hasLikeStructure = element.closest(`.${BUTTON_STRUCTURE.container}`);
-            const isClickable = window.getComputedStyle(element).cursor === 'pointer';
-
-            return hasLikeClass && (hasLikeStructure || isClickable);
-        } catch (error) {
-            return false;
-        }
-    }
-
     // Improved click simulation
     function simulateClick(element) {
         try {
-            // Create and dispatch multiple types of events
             const events = [
-                new MouseEvent('mouseover', {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window
-                }),
-                new MouseEvent('mousedown', {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window
-                }),
-                new MouseEvent('mouseup', {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window
-                }),
-                new MouseEvent('click', {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window,
-                    detail: 1
-                })
+                new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }),
+                new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }),
+                new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }),
+                new MouseEvent('click', { bubbles: true, cancelable: true, view: window, detail: 1 }),
             ];
 
-            // Try clicking the element and its parent structure
-            const elementsToClick = [
-                element,
-                element.parentElement,
-                element.closest(`.${BUTTON_STRUCTURE.container}`),
-                element.querySelector(`.${BUTTON_STRUCTURE.inner}`),
-                element.querySelector(`.${BUTTON_STRUCTURE.middle}`)
-            ].filter(Boolean);
+            const elementsToClick = [element, element.parentElement].filter(Boolean);
 
-            // Try clicking each element with each event
             elementsToClick.forEach(el => {
-                events.forEach(event => {
-                    el.dispatchEvent(event);
-                });
+                events.forEach(event => { el.dispatchEvent(event); });
                 try { el.click(); } catch (e) {}
             });
 
@@ -239,7 +186,6 @@
             CONFIG.stats.currentCombo++;
             if (CONFIG.stats.currentCombo > CONFIG.stats.maxCombo) {
                 CONFIG.stats.maxCombo = CONFIG.stats.currentCombo;
-                showNotification(`🔥 New Max Combo: ${CONFIG.stats.maxCombo}!`, 'success');
             }
             // Reset combo timeout
             if (CONFIG.comboTimeoutId) clearTimeout(CONFIG.comboTimeoutId);
